@@ -256,7 +256,8 @@ numbench/  backends/ (base, array_backend[numpy+cupy], torch_backend, numba_back
 tests/     accuracy, physics, bench/profile, API (local + fake-sbatch end to end), SLURM executor
 results/   benchmark.csv, speedup.png, profile_*.txt, heat_torch_cpu_threads.csv  (from the real run)
 Dockerfile.cpu  Dockerfile.gpu (untested)  environment.yml  requirements.lock.txt  pyproject.toml
-.github/workflows/ci.yml   ruff + pytest + tiny benchmark uploaded as an artifact
+ci/github-actions-ci.yml   workflow: ruff + pytest + tiny benchmark uploaded as an artifact
+                           (install it as .github/workflows/ci.yml, see the note below)
 ```
 
 ## What was not executed here
@@ -266,7 +267,11 @@ Dockerfile.cpu  Dockerfile.gpu (untested)  environment.yml  requirements.lock.tx
   hooks), but they never ran: their tests **skip with an explicit reason** and I have no CUDA numbers.
   CPU and Apple MPS results are real; CUDA results are not claimed.
 * `Dockerfile.gpu` was not built (no NVIDIA host). `Dockerfile.cpu` was not built either (the Docker
-  daemon was not running during development). The CI workflow has not run yet at the time of writing.
+  daemon was not running during development). **CI has not run**: the workflow lives in `ci/github-actions-ci.yml` because the GitHub token
+  used to publish this repository lacked the `workflow` scope, so it could not be pushed to
+  `.github/workflows/`. To enable it: `gh auth refresh -s workflow`, then
+  `mkdir -p .github/workflows && git mv ci/github-actions-ci.yml .github/workflows/ci.yml`. It
+  runs ruff, pytest and `python -m numbench.bench --quick`, and uploads the CSV as an artifact.
 * The SLURM executor was tested against **fake `sbatch`/`squeue` executables**, including an end to
   end API run where the fake sbatch executes the generated script, not against a real SLURM cluster.
   Real-cluster details (accounts, QoS, module names, `sacct`-based accounting) will need site tuning.

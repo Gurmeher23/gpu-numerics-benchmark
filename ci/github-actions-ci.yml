@@ -1,0 +1,31 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install (CPU torch wheel)
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+          pip install -e ".[numba,dev]"
+      - name: Lint
+        run: |
+          ruff check .
+          ruff format --check .
+      - name: Tests (CUDA / CuPy / MPS cases skip with explicit reasons)
+        run: pytest -q
+      - name: Tiny benchmark
+        run: python -m numbench.bench --quick --out bench-out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-csv
+          path: bench-out/
