@@ -1,0 +1,17 @@
+         9 function calls in 0.210 seconds
+
+   Ordered by: internal time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.210    0.210    0.210    0.210 base.py:81(heat_ftcs)
+        1    0.000    0.000    0.000    0.000 {built-in method numpy.array}
+        1    0.000    0.000    0.210    0.210 array_backend.py:67(heat_solve)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 array_backend.py:43(_to_host)
+        1    0.000    0.000    0.000    0.000 array_backend.py:40(_to_dev)
+        1    0.000    0.000    0.210    0.210 bench.py:50(run)
+        1    0.000    0.000    0.000    0.000 {built-in method numpy.asarray}
+        1    0.000    0.000    0.000    0.000 array_backend.py:48(_sync)
+
+
+

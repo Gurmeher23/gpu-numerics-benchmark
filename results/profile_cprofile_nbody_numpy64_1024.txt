@@ -1,0 +1,21 @@
+         104 function calls in 0.541 seconds
+
+   Ordered by: internal time
+   List reduced from 15 to 12 due to restriction <12>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       11    0.360    0.033    0.534    0.049 array_backend.py:16(accel_xp)
+       22    0.174    0.008    0.174    0.008 {method 'reduce' of 'numpy.ufunc' objects}
+       11    0.007    0.001    0.541    0.049 array_backend.py:63(<lambda>)
+        1    0.000    0.000    0.541    0.541 base.py:65(verlet)
+       22    0.000    0.000    0.174    0.008 {method 'sum' of 'numpy.ndarray' objects}
+       22    0.000    0.000    0.174    0.008 _methods.py:47(_sum)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.541    0.541 array_backend.py:59(nbody_simulate)
+        3    0.000    0.000    0.000    0.000 {built-in method numpy.array}
+        1    0.000    0.000    0.541    0.541 bench.py:42(run)
+        2    0.000    0.000    0.000    0.000 array_backend.py:43(_to_host)
+        3    0.000    0.000    0.000    0.000 array_backend.py:40(_to_dev)
+
+
+
