@@ -7,7 +7,7 @@
     GET  /jobs/{id}/manifest   reproducibility manifest
     GET  /backends             availability of every backend, with reasons
 
-Run:  NUMBENCH_EXECUTOR=local|slurm  NUMBENCH_RUNS_DIR=runs  uvicorn numbench.api:app
+Run:  NUMBENCH_EXECUTOR=local|slurm  NUMBENCH_RUNS_DIR=runs  uvicorn --factory numbench.api:create_app
 """
 
 from __future__ import annotations
@@ -105,9 +105,3 @@ def create_app(store: JobStore | None = None, executor: Executor | None = None) 
         return json.loads((_dir(job_id) / "manifest.json").read_text())
 
     return app
-
-
-def __getattr__(name: str):  # lazy `app` so importing the module has no side effects
-    if name == "app":
-        return create_app()
-    raise AttributeError(name)

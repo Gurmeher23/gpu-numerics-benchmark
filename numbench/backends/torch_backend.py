@@ -98,7 +98,6 @@ class TorchBackend(Backend):
     def peak_memory_mb(self):
         if self.device == "cuda":
             return self.torch.cuda.max_memory_allocated() / 2**20, "cuda_max_allocated"
-        if self.device == "mps":
-            # MPS exposes no peak counter; this is the driver's current allocation.
-            return self.torch.mps.driver_allocated_memory() / 2**20, "mps_driver_allocated"
+        # MPS exposes no peak-allocation counter (torch.mps only reports the driver pool,
+        # which grows monotonically and says nothing per case), so it is left unreported.
         return None

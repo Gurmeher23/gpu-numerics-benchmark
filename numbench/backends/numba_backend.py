@@ -30,16 +30,25 @@ def _accel_kernel(pos, mass, eps2, g, out):  # pragma: no cover - exercised via 
 
 
 @njit(parallel=True, cache=True)
-def _heat_kernel(u, v, r, steps):  # pragma: no cover - exercised via backend
+def _heat_step(u, v, r):  # pragma: no cover - exercised via backend
     n, m = u.shape
+    for i in prange(1, n - 1):
+        for j in range(1, m - 1):
+            lap = u[i + 1, j] + u[i - 1, j] + u[i, j + 1] + u[i, j - 1] - 4.0 * u[i, j]
+            v[i, j] = u[i, j] + r * lap
+
+
+@njit(cache=True)
+def _heat_kernel(u, v, r, steps):  # pragma: no cover - exercised via backend
+    """Ping-pong between two buffers (one parallel region per step, no copy-back).
+
+    Both buffers hold the Dirichlet boundary; only interior nodes are ever written.
+    Returns the buffer holding the final state.
+    """
     for _ in range(steps):
-        for i in prange(1, n - 1):
-            for j in range(1, m - 1):
-                lap = u[i + 1, j] + u[i - 1, j] + u[i, j + 1] + u[i, j - 1] - 4.0 * u[i, j]
-                v[i, j] = u[i, j] + r * lap
-        for i in prange(1, n - 1):
-            for j in range(1, m - 1):
-                u[i, j] = v[i, j]
+        _heat_step(u, v, r)
+        u, v = v, u
+    return u
 
 
 class NumbaBackend(Backend):
@@ -67,6 +76,5 @@ class NumbaBackend(Backend):
 
     def heat_solve(self, u0, r, steps):
         u = np.array(u0, dtype=np.float64)
-        v = u.copy()  # boundary values are copied once and never rewritten
-        _heat_kernel(u, v, r, steps)
-        return u
+        v = u.copy()  # both buffers carry the boundary values, which are never rewritten
+        return _heat_kernel(u, v, r, steps)

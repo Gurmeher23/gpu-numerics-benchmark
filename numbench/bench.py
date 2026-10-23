@@ -221,8 +221,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--repeats", type=int, default=7)
     ap.add_argument("--warmup", type=int, default=2)
     ap.add_argument("--quick", action="store_true", help="tiny sizes for CI smoke runs")
+    ap.add_argument("--torch-threads", type=int, help="torch.set_num_threads(N) for the torch CPU backends")
     ap.add_argument("--out", type=Path, default=Path("results"))
     args = ap.parse_args(argv)
+    if args.torch_threads:
+        import torch
+
+        torch.set_num_threads(args.torch_threads)
 
     kernels = ["nbody", "heat"] if args.kernel == "both" else [args.kernel]
     sizes = dict(QUICK_SIZES) if args.quick else {}
