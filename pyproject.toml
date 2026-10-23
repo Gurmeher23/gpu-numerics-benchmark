@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "numbench"
+version = "0.1.0"
+description = "Validate and benchmark scientific kernels (N-body, heat equation) across NumPy, PyTorch (CPU/MPS/CUDA), CuPy and Numba, with a job-submission API"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+    "numpy==2.5.4",
+    "torch==2.14.1",
+    "matplotlib==3.11.2",
+    "fastapi==0.161.1",
+    "pydantic==2.14.1",
+    "uvicorn==0.54.0",
+]
+
+[project.optional-dependencies]
+numba = ["numba==0.68.0"]
+cupy = ["cupy-cuda12x==13.4.1"]  # CUDA 12 wheels; needs an NVIDIA GPU, not installed or run on the dev Mac
+dev = ["pytest==9.1.1", "httpx==0.28.1", "ruff==0.17.2"]
+
+[project.scripts]
+numbench-bench = "numbench.bench:main"
+numbench-profile = "numbench.profile:main"
+
+[tool.setuptools.packages.find]
+include = ["numbench*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+filterwarnings = ["ignore:Using `httpx` with `starlette.testclient`:DeprecationWarning"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "NPY"]
+ignore = ["E741"]

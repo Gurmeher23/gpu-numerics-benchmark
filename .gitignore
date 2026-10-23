@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.numba_cache/
+runs/
+bench-out/
+results/*
+!results/benchmark.csv
+!results/speedup.png
+!results/profile_*.txt
+build/
+dist/
+.DS_Store
