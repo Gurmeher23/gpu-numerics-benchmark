@@ -1,0 +1,30 @@
+# GPU image (NVIDIA CUDA runtime base).
+#
+# STATUS: NOT BUILT OR RUN LOCALLY. The development machine is an Apple-Silicon Mac with
+# no CUDA. This file follows the documented patterns for the CUDA runtime images, the
+# PyTorch CUDA wheels and CuPy's cupy-cuda12x wheel; treat the first build on a GPU host
+# as the test. Run with:  docker run --gpus all -p 8000:8000 numbench-gpu
+FROM nvidia/cuda:12.6.2-cudnn-runtime-ubuntu24.04
+
+ARG TORCH_VERSION=2.14.1
+ARG CUPY_VERSION=13.4.1
+ENV DEBIAN_FRONTEND=noninteractive PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
+    NUMBENCH_RUNS_DIR=/data/runs NUMBENCH_EXECUTOR=local
+
+RUN apt-get update && apt-get install -y --no-install-recommends python3 python3-venv python3-pip git \
+    && rm -rf /var/lib/apt/lists/*
+RUN python3 -m venv /opt/venv
+ENV PATH=/opt/venv/bin:$PATH
+
+WORKDIR /app
+# The default PyPI torch wheel for Linux ships CUDA 12 libraries.
+RUN pip install "torch==${TORCH_VERSION}" "cupy-cuda12x==${CUPY_VERSION}"
+COPY pyproject.toml README.md ./
+COPY numbench ./numbench
+ARG GIT_COMMIT=unknown
+ENV NUMBENCH_GIT_COMMIT=${GIT_COMMIT}
+RUN pip install ".[numba]"
+
+VOLUME /data
+EXPOSE 8000
+CMD ["uvicorn", "numbench.api:create_app", "--host", "0.0.0.0", "--port", "8000", "--factory"]

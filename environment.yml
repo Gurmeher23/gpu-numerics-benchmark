@@ -1,0 +1,21 @@
+# conda/mamba:  mamba env create -f environment.yml && conda activate numbench
+# Versions match requirements.lock.txt. For an NVIDIA GPU also: pip install cupy-cuda12x==13.4.1
+# (CuPy path is not exercised on the development Mac.)
+name: numbench
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - numpy==2.5.4
+      - torch==2.14.1
+      - matplotlib==3.11.2
+      - fastapi==0.161.1
+      - pydantic==2.14.1
+      - uvicorn==0.54.0
+      - numba==0.68.0
+      - pytest==9.1.1
+      - httpx==0.28.1
+      - ruff==0.17.2
+      - -e .

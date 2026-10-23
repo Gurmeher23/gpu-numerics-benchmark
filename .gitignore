@@ -7,7 +7,7 @@ __pycache__/
 runs/
 bench-out/
 results/*
-!results/benchmark.csv
+!results/*.csv
 !results/speedup.png
 !results/profile_*.txt
 build/
